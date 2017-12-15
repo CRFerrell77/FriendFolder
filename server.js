@@ -1,9 +1,13 @@
+//Requires
 var express = require("express");
 var bodyParser = require("body-parser");
 var path = require("path");
 
+var html = require(path.join(__dirname, "./app/routing/htmlRoutes.js"));
+var api = require(path.join(__dirname, "./app/routing/apiRoutes.js"));
+
 var app = express();
-var port = 3000;
+var port = process.env.PORT || 3000;
 
 // Parse application
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -11,17 +15,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
-// Routes
-// =============================================================
+app.use(express.static(path.join(__dirname,'./app/public')));
 
-// Basic route that sends the user first to the AJAX Page
-app.get("/", function(req, res) {
-    res.sendFile(path.join(__dirname, "view.html"));
-});
-
-app.get("/add", function(req, res) {
-    res.sendFile(path.join(__dirname, "add.html"));
-});
+// Initialize server routs
+html(app);
+api(app);
 
 //listen for the PORT and report back
 app.listen(port, function() {
